@@ -1342,7 +1342,7 @@ public:
             }
            #endif
 
-           #if JUCE_LINUX
+           #if JUCE_LINUX && !JUCE_HEADLESS_PLUGIN_CLIENT
             hostWindow = {};
            #endif
         }
@@ -1570,8 +1570,8 @@ public:
        #elif JUCE_LINUX
         #if ! JUCE_HEADLESS_PLUGIN_CLIENT
         ScopedXDisplay display;
-        #endif
         Window hostWindow = {};
+        #endif
        #else
         HWND hostWindow = {};
         WindowsHooks hooks;
