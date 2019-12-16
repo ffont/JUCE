@@ -131,6 +131,13 @@
  #define JUCE_BELA 0
 #endif
 
+/** Config: JUCE_ELKPI
+    Enables Elk Raspa audio devices on ElkPi boards.
+*/
+#ifndef JUCE_ELKPI
+ #define JUCE_ELKPI 0
+#endif
+
 /** Config: JUCE_USE_ANDROID_OBOE
     ***
     DEVELOPER PREVIEW - Oboe is currently in developer preview and

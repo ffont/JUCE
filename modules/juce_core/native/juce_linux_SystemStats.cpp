@@ -24,6 +24,10 @@
 extern "C" int cobalt_thread_mode();
 #endif
 
+#if JUCE_ELKPI
+#include "twine/twine.cpp"
+#endif
+
 namespace juce
 {
 
@@ -193,6 +197,8 @@ int64 Time::getHighResolutionTicks() noexcept
         clock_gettime (CLOCK_MONOTONIC, &t);
     else
         __wrap_clock_gettime (CLOCK_MONOTONIC, &t);
+   #elif JUCE_ELKPI
+    return twine::current_rt_time().count() / 1000;
    #else
     clock_gettime (CLOCK_MONOTONIC, &t);
    #endif

@@ -153,7 +153,15 @@
   #include <Midi.h>
  #endif
 
- #undef SIZEOF
+ #if JUCE_ELKPI
+  /* Got an include error here? If so, you've either not got the XXX headers
+     installed, or you've not got your paths set up correctly to find its header
+     files.
+  */
+  // Do necessary includes
+ #endif
+
+#undef SIZEOF
 
 //==============================================================================
 #elif JUCE_ANDROID
@@ -224,6 +232,12 @@
   #include "native/juce_linux_Bela.cpp"
  #else
   #include "native/juce_linux_Midi.cpp"
+ #endif
+
+ #if JUCE_ELKPI
+   #include "native/juce_linux_ElkPi.cpp"
+ #else
+   #include "native/juce_linux_Midi.cpp"
  #endif
 
 //==============================================================================

@@ -74,6 +74,10 @@ AudioIODeviceType* AudioIODeviceType::createAudioIODeviceType_JACK()            
 AudioIODeviceType* AudioIODeviceType::createAudioIODeviceType_Bela()            { return nullptr; }
 #endif
 
+#if !(JUCE_LINUX && JUCE_ELKPI)
+AudioIODeviceType *AudioIODeviceType::createAudioIODeviceType_ElkPi()           { return nullptr; }
+#endif
+
 #if ! JUCE_ANDROID
 AudioIODeviceType* AudioIODeviceType::createAudioIODeviceType_Android()         { return nullptr; }
 #endif
