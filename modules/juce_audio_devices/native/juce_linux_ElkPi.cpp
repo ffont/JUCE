@@ -31,6 +31,7 @@ public:
         : AudioIODevice("ElkPi", "ElkPi")
     {
         deviceIsOpen = false;
+        isRunning = false;
         lastError = "";
         xruns = -1;
         numberOfInputs = 0;
@@ -40,7 +41,7 @@ public:
 
         if (raspa_init() != 0)
         {
-            DBG("Failed initializartion of ElkPi's Raspa driver");
+            DBG("Error running raspa_init()");
         }   
     }
 
@@ -93,15 +94,16 @@ public:
         numberOfOutputs = raspa_get_num_output_channels();
 
         // open device and configure raspa callback
+        unsigned int debug_flags = 0;
         int returnCode = raspa_open(
             bufferSize,
             processCallback,
-            // ?
-        );
+            this, // Pass a pointer to current ElkPiAudioIODevice that raspa will pass back to the callback function
+            debug_flags);
 
         if (returnCode != 0)
         {
-            DBG("Error opening ElkPi's Raspa device: " + raspa_get_error_msg(returnCode));
+            DBG("Error runninf raspa_open(): " + raspa_get_error_msg(returnCode));
             lastError = raspa_get_error_msg(returnCode);
             return lastError;
         }
@@ -124,6 +126,7 @@ public:
         numberOfInputs = 0;
         numberOfOutputs = 0;
         deviceIsOpen = false;
+        isRunning = false;
 
         // Free memory for buffers (?)
         channelInBuffer.free();
@@ -134,7 +137,50 @@ public:
 
     void start(AudioIODeviceCallback *newCallback) override
     {
-        // set new AudioIODeviceCallback callback
+
+        if (!deviceIsOpen)
+            return;
+
+        if (isRunning)
+        {
+            if (newCallback != callback)
+            {
+                if (newCallback != nullptr)
+                    newCallback->audioDeviceAboutToStart(this);
+
+                {
+                    ScopedLock lock(callbackLock);
+                    std::swap(callback, newCallback);
+                }
+
+                if (newCallback != nullptr)
+                    newCallback->audioDeviceStopped();
+            }
+        }
+        else
+        {
+            callback = newCallback;
+            int returnCode = raspa_start_realtime();
+            if (returnCode == 0)
+            {
+                isRunning = true;
+            } else {
+                DBG("Error running raspa_start_realtime(): " + raspa_get_error_msg(returnCode));
+            }
+
+            if (callback != nullptr)
+            {
+                if (isRunning)
+                {
+                    callback->audioDeviceAboutToStart(this);
+                }
+                else
+                {
+                    lastError = "raspa_start_realtime failed";
+                    callback->audioDeviceError(lastError);
+                }
+            }
+        }
     }
 
     void stop() override
@@ -147,7 +193,12 @@ public:
             std::swap(callback, oldCallback);
         }
 
-        raspa_close(); // NOTE: this also closes device (?)
+        int returnCode = raspa_close(); // NOTE: this also closes device (?)
+        if (returnCode == 0){
+            isRunning = false;
+        } else {
+            DBG("Error running raspa_close(): " + raspa_get_error_msg(returnCode));
+        }
 
         if (oldCallback != nullptr)
             oldCallback->audioDeviceStopped(); // Why this?
@@ -206,6 +257,7 @@ private:
 
     int bufferSize;
     bool deviceIsOpen;
+    bool isRunning;
     String lastError;
     int xruns;
     int numberOfInputs;
@@ -245,10 +297,8 @@ private:
 
     static int processCallback(float *input, float *output, void *data)
     {
-        // Call "process" somehow?
-        // get numSamples from data?
-
-        return 0;
+        // Call process function in ElkPiAudioIODevice
+        static_cast<ElkPiAudioIODevice *>(data)->process(data->getCurrentBufferSizeSamples(), input, output);
     }
     
 };
