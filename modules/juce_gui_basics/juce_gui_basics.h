@@ -44,7 +44,7 @@
   dependencies:     juce_graphics juce_data_structures
   OSXFrameworks:    Cocoa Carbon QuartzCore
   iOSFrameworks:    UIKit MobileCoreServices
-  linuxPackages:    x11 xinerama xext
+  linuxPackages:    
 
  END_JUCE_MODULE_DECLARATION
 
@@ -298,7 +298,11 @@ namespace juce
 #include "mouse/juce_LassoComponent.h"
 
 #if JUCE_LINUX
- #include "native/juce_linux_X11.h"
+ #if ! JUCE_HEADLESS_PLUGIN_CLIENT
+  #include "native/juce_linux_X11.h"
+ #else
+  #include "native/juce_linux_headless_X_keysymdef.h"
+ #endif
 #endif
 
 #include "layout/juce_FlexItem.h"

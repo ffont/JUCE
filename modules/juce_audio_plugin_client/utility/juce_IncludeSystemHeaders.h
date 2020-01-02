@@ -41,9 +41,11 @@
 #elif JUCE_LINUX
  #include <float.h>
  #include <sys/time.h>
- #include <X11/Xlib.h>
- #include <X11/Xutil.h>
- #include <X11/Xatom.h>
+ #if ! JUCE_HEADLESS_PLUGIN_CLIENT
+   #include <X11/Xlib.h>
+   #include <X11/Xutil.h>
+   #include <X11/Xatom.h>
+ #endif
  #undef Font
  #undef KeyPress
  #undef Drawable
