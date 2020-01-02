@@ -1,0 +1,1 @@
+rsync -av --progress /Users/ffont/Developer/JUCE_ffont/ /Volumes/workdir/JUCE_ffont --exclude .git

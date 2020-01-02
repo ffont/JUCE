@@ -228,17 +228,15 @@
   #include "native/juce_linux_JackAudio.cpp"
  #endif
 
- #if JUCE_BELA
-  #include "native/juce_linux_Bela.cpp"
- #else
-  #include "native/juce_linux_Midi.cpp"
- #endif
+  #if JUCE_ELKPI
+    #include "native/juce_linux_ElkPi.cpp"
+  #endif
 
- #if JUCE_ELKPI
-   #include "native/juce_linux_ElkPi.cpp"
- #else
-   #include "native/juce_linux_Midi.cpp"
- #endif
+  #if JUCE_BELA
+    #include "native/juce_linux_Bela.cpp"
+  #else
+    #include "native/juce_linux_Midi.cpp"
+  #endif
 
 //==============================================================================
 #elif JUCE_ANDROID
