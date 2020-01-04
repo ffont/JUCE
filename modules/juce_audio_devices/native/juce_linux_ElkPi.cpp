@@ -30,6 +30,8 @@ public:
     ElkPiAudioIODevice()
         : AudioIODevice("ElkPi", "ElkPi")
     {
+        DBG("- Runnning ElkPiAudioIODevice constructor");
+
         deviceIsOpen = false;
         isRunning = false;
         lastError = "";
@@ -47,6 +49,7 @@ public:
 
     ~ElkPiAudioIODevice()
     {
+        DBG("- Runnning ElkPiAudioIODevice destructor");
         close();
     }
 
@@ -89,6 +92,8 @@ public:
     String open(const BigInteger &inputChannels, const BigInteger &outputChannels,
                 double sampleRate, int bufferSizeSamples) override
     {
+        DBG("- Calling ElkPiAudioIODevice.open");
+
         // set number of input and output channels
         numberOfInputs = raspa_get_num_input_channels();
         numberOfOutputs = raspa_get_num_output_channels();
@@ -119,6 +124,8 @@ public:
 
     void close() override
     {
+        DBG("- Calling ElkPiAudioIODevice.close");
+
         stop();
         
         lastError = "";
@@ -137,6 +144,7 @@ public:
 
     void start(AudioIODeviceCallback *newCallback) override
     {
+        DBG("- Calling ElkPiAudioIODevice.start");
 
         if (!deviceIsOpen)
             return;
@@ -185,6 +193,8 @@ public:
 
     void stop() override
     {
+        DBG("- Calling ElkPiAudioIODevice.stop");
+
         AudioIODeviceCallback *oldCallback = nullptr;
 
         if (callback != nullptr)
@@ -317,6 +327,8 @@ struct ElkPiAudioIODeviceType : public AudioIODeviceType
 
     AudioIODevice *createDevice(const String &outputName, const String &inputName) override
     {
+        DBG("- Creating ElkPiAudioIODevice device from type");
+
         if (outputName == ElkPiAudioIODevice::typeName || inputName == ElkPiAudioIODevice::typeName)
             return new ElkPiAudioIODevice();
 

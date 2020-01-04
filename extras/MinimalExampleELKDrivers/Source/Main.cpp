@@ -39,6 +39,6 @@ int main (int argc, char* argv[])
         std::cout << "Done!" << std::endl;
         return 0;
     }
-    std::cout << "Failed opening device..." << std::endl;
+    std::cout << "Failed opening device :( :( :(" << std::endl;
     return -1;
 }
