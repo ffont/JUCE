@@ -241,7 +241,9 @@ struct SharedMessageThread  : public Thread
 
         MessageManager::getInstance()->setCurrentThreadAsMessageThread();
 
+        #if ! JUCE_HEADLESS_PLUGIN_CLIENT
         ScopedXDisplay xDisplay;
+        #endif
 
         while ((! threadShouldExit()) && MessageManager::getInstance()->runDispatchLoopUntil (250))
         {}
@@ -1334,9 +1336,11 @@ public:
                 ed->setScaleFactor (wrapper.editorScaleFactor);
                #endif
            #elif JUCE_LINUX
+            #if ! JUCE_HEADLESS_PLUGIN_CLIENT
             addToDesktop (0, args.ptr);
             hostWindow = (Window) args.ptr;
             XReparentWindow (display.display, (Window) getWindowHandle(), hostWindow, 0, 0);
+            #endif
            #else
             hostWindow = attachComponentToWindowRefVST (this, args.ptr, wrapper.useNSView);
            #endif
@@ -1354,7 +1358,7 @@ public:
             }
            #endif
 
-           #if JUCE_LINUX
+           #if JUCE_LINUX && !JUCE_HEADLESS_PLUGIN_CLIENT
             hostWindow = {};
            #endif
         }
@@ -1443,7 +1447,7 @@ public:
                     setSize (pos.getWidth(), pos.getHeight());
 
                     shouldResizeEditor = true;
-                   #else
+                   #elif ! JUCE_HEADLESS_PLUGIN_CLIEN
                     ignoreUnused (resizeEditor);
                     XResizeWindow (display.display, (Window) getWindowHandle(),
                                    static_cast<unsigned int> (roundToInt (pos.getWidth()  * wrapper.editorScaleFactor)),
@@ -1581,8 +1585,10 @@ public:
        #if JUCE_MAC
         void* hostWindow = nullptr;
        #elif JUCE_LINUX
+        #if ! JUCE_HEADLESS_PLUGIN_CLIENT
         ScopedXDisplay display;
         Window hostWindow = {};
+        #endif
        #else
         HWND hostWindow = {};
         WindowsHooks hooks;

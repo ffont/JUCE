@@ -90,6 +90,11 @@
 
 //==============================================================================
 #elif JUCE_LINUX
+
+ #include <unistd.h>
+ #if JUCE_HEADLESS_PLUGIN_CLIENT
+  #include "native/juce_linux_headless_X_keysymdef.h"
+ #else
  #include <X11/Xlib.h>
  #include <X11/Xatom.h>
  #include <X11/Xresource.h>
@@ -98,8 +103,6 @@
  #include <X11/keysym.h>
  #include <X11/XKBlib.h>
  #include <X11/cursorfont.h>
- #include <unistd.h>
-
  #if JUCE_USE_XRANDR
   /* If you're trying to use Xrandr, you'll need to install the "libxrandr-dev" package..  */
   #include <X11/extensions/Xrandr.h>
@@ -129,6 +132,8 @@
 
  #undef SIZEOF
  #undef KeyPress
+ 
+#endif
 #endif
 
 #include <set>
@@ -303,8 +308,12 @@ namespace juce
  #include "native/juce_win32_FileChooser.cpp"
 
 #elif JUCE_LINUX
- #include "native/juce_linux_X11.cpp"
- #include "native/juce_linux_X11_Clipboard.cpp"
+ #if JUCE_HEADLESS_PLUGIN_CLIENT
+  #include "native/juce_linux_headless_Windowing.cpp"
+  #include "native/juce_linux_headless_Clipboard.cpp"
+ #else
+  #include "native/juce_linux_X11.cpp"
+  #include "native/juce_linux_X11_Clipboard.cpp"
 
  #if JUCE_GCC
   #pragma GCC diagnostic push
@@ -316,6 +325,7 @@ namespace juce
  #if JUCE_GCC
   #pragma GCC diagnostic pop
  #endif
+#endif
 
  #include "native/juce_linux_FileChooser.cpp"
 
