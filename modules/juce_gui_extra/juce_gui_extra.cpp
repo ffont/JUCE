@@ -187,7 +187,7 @@
  #include "native/juce_win32_SystemTrayIcon.cpp"
 
 //==============================================================================
-#elif && ! JUCE_HEADLESS_PLUGIN_CLIENT
+#elif JUCE_LINUX && ! JUCE_HEADLESS_PLUGIN_CLIENT
  #if JUCE_GCC
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
