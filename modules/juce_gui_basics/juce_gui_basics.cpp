@@ -90,45 +90,50 @@
 
 //==============================================================================
 #elif JUCE_LINUX
- #include <X11/Xlib.h>
- #include <X11/Xatom.h>
- #include <X11/Xresource.h>
- #include <X11/Xutil.h>
- #include <X11/Xmd.h>
- #include <X11/keysym.h>
- #include <X11/XKBlib.h>
- #include <X11/cursorfont.h>
- #include <unistd.h>
+  #include <unistd.h>
+  #if JUCE_HEADLESS_PLUGIN_CLIENT
+    #include "native/juce_linux_headless_X_keysymdef.h"
+  #else
+    #include <X11/Xlib.h>
+    #include <X11/Xatom.h>
+    #include <X11/Xresource.h>
+    #include <X11/Xutil.h>
+    #include <X11/Xmd.h>
+    #include <X11/keysym.h>
+    #include <X11/XKBlib.h>
+    #include <X11/cursorfont.h>
+      
+    #if JUCE_USE_XRANDR
+      /* If you're trying to use Xrandr, you'll need to install the "libxrandr-dev" package..  */
+      #include <X11/extensions/Xrandr.h>
+    #endif
 
- #if JUCE_USE_XRANDR
-  /* If you're trying to use Xrandr, you'll need to install the "libxrandr-dev" package..  */
-  #include <X11/extensions/Xrandr.h>
- #endif
+    #if JUCE_USE_XINERAMA
+      /* If you're trying to use Xinerama, you'll need to install the "libxinerama-dev" package..  */
+      #include <X11/extensions/Xinerama.h>
+    #endif
 
- #if JUCE_USE_XINERAMA
-  /* If you're trying to use Xinerama, you'll need to install the "libxinerama-dev" package..  */
-  #include <X11/extensions/Xinerama.h>
- #endif
+    #if JUCE_USE_XSHM
+      #include <X11/extensions/XShm.h>
+      #include <sys/shm.h>
+      #include <sys/ipc.h>
+    #endif
 
- #if JUCE_USE_XSHM
-  #include <X11/extensions/XShm.h>
-  #include <sys/shm.h>
-  #include <sys/ipc.h>
- #endif
+    #if JUCE_USE_XRENDER
+      // If you're missing these headers, try installing the libxrender-dev and libxcomposite-dev
+      #include <X11/extensions/Xrender.h>
+      #include <X11/extensions/Xcomposite.h>
+    #endif
 
- #if JUCE_USE_XRENDER
-  // If you're missing these headers, try installing the libxrender-dev and libxcomposite-dev
-  #include <X11/extensions/Xrender.h>
-  #include <X11/extensions/Xcomposite.h>
- #endif
+    #if JUCE_USE_XCURSOR
+      // If you're missing this header, try installing the libxcursor-dev package
+      #include <X11/Xcursor/Xcursor.h>
+    #endif
 
- #if JUCE_USE_XCURSOR
-  // If you're missing this header, try installing the libxcursor-dev package
-  #include <X11/Xcursor/Xcursor.h>
- #endif
+    #undef SIZEOF
+    #undef KeyPress
 
- #undef SIZEOF
- #undef KeyPress
+  #endif
 #endif
 
 #include <set>
@@ -305,18 +310,23 @@ namespace juce
  #include "native/juce_win32_FileChooser.cpp"
 
 #elif JUCE_LINUX
- #include "native/juce_linux_X11.cpp"
- #include "native/juce_linux_X11_Clipboard.cpp"
+ #if JUCE_HEADLESS_PLUGIN_CLIENT
+  #include "native/juce_linux_headless_Windowing.cpp"
+  #include "native/juce_linux_headless_Clipboard.cpp"
+ #else
+  #include "native/juce_linux_X11.cpp"
+  #include "native/juce_linux_X11_Clipboard.cpp"
 
- #if JUCE_GCC
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
- #endif
+  #if JUCE_GCC
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #endif
 
- #include "native/juce_linux_X11_Windowing.cpp"
+  #include "native/juce_linux_X11_Windowing.cpp"
 
- #if JUCE_GCC
-  #pragma GCC diagnostic pop
+  #if JUCE_GCC
+    #pragma GCC diagnostic pop
+  #endif
  #endif
 
  #include "native/juce_linux_FileChooser.cpp"

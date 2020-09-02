@@ -89,7 +89,7 @@
  #endif
 
 //==============================================================================
-#elif JUCE_LINUX
+#elif JUCE_LINUX && ! JUCE_HEADLESS_PLUGIN_CLIENT
  #include <X11/Xlib.h>
  #include <X11/Xatom.h>
  #include <X11/Xutil.h>
@@ -187,7 +187,7 @@
  #include "native/juce_win32_SystemTrayIcon.cpp"
 
 //==============================================================================
-#elif JUCE_LINUX
+#elif && ! JUCE_HEADLESS_PLUGIN_CLIENT
  #if JUCE_GCC
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
